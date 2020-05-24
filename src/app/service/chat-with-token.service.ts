@@ -27,15 +27,13 @@ export class ChatWithTokenService {
     .start()
     .then((data) => {
       console.log('Connection started!')
-      this.hubConnection.invoke("GetConnectionId");
+      this.hubConnection.invoke("CreateNotificationGroup",1);
     })
     .catch(err => console.log('Error while establishing connection :('));
     this.hubConnection.on("receiveMessage",data=>{
       this.chatNotifier.next(data);
     })
-    this.hubConnection.on("saveConnectionId",data=>{
-      this.createNotificationGroup(data);
-    })
+
   }
   CloseConnectio(){
 
@@ -45,15 +43,5 @@ export class ChatWithTokenService {
     let query=new Message();
     query.body=body;
     return this.http.post("https://localhost:44366/api/ticket",query);
-  }
-  createNotificationGroup(id){
-    debugger
-    let query=new NotificationGroup();
-    query.Connection_Id=id;
-    var header = {
-      headers: new HttpHeaders()
-        .set('Authorization',  `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJZCI6ImExOGJlOWMwLWFhNjUtNGFmOC1iZDE3LTAwYmQ5MzQ0ZTU3NyIsIkJyYW5jaF9EZXBhcnRlbWVudCI6IjIiLCJlbWFpbCI6ImVtcGxveWVlQGVtcGxveWVlLmNvbSIsImp0aSI6IjU5ZGMwYzgwLTY0MzMtNGNmOC05ZTM2LWQxMTk4ZmEwNmI5MyIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6ImVtcGxveWVlIiwiZXhwIjoxNTkwNTAxNjAyLCJpc3MiOiJhc2RAYXNkLmNvbSIsImF1ZCI6ImFzZEBhc2QuY29tIn0.0haFGRaakijqnIHf-yXtpKZh1d1o0xhtaq6FxWUFXXM`)
-    }
-    return this.http.post("https://localhost:44366/api/notify/CREATE_NOTIFICATION_GROUP",query,header).subscribe();
   }
 }
